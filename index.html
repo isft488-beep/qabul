@@ -25,11 +25,6 @@
         }
         
         .test-option:hover { background-color: #fff0f5; }
-        input[type="radio"]:checked + label { 
-            background-color: #8b003d; 
-            color: white; 
-            border-color: #5c0028; 
-        }
         
         @keyframes fadeInScale {
             0% { opacity: 0; transform: scale(0.95); }
@@ -146,11 +141,11 @@
                 <div class="grid grid-cols-2 gap-4" id="studyTypeGrid">
                     <label class="relative cursor-pointer group" id="kunduzgiOption">
                         <input type="radio" name="studyType" id="studyTypeKunduzgi" value="Kunduzgi" required class="peer hidden">
-                        <div class="p-4 text-center border-2 border-gray-100 rounded-2xl font-bold text-gray-500 group-hover:bg-gray-50 peer-checked:border-burgundy peer-checked:bg-red-50 peer-checked:text-burgundy transition-all text-xs uppercase">Kunduzgi</div>
+                        <div class="p-4 text-center border-4 border-gray-100 rounded-2xl font-bold text-gray-500 group-hover:bg-gray-50 peer-checked:border-[#5c0028] peer-checked:bg-red-50 peer-checked:text-burgundy transition-all text-xs uppercase">Kunduzgi</div>
                     </label>
                     <label class="relative cursor-pointer group" id="masofaviyOption">
                         <input type="radio" name="studyType" id="studyTypeMasofaviy" value="Masofaviy" required class="peer hidden">
-                        <div class="p-4 text-center border-2 border-gray-100 rounded-2xl font-bold text-gray-500 group-hover:bg-gray-50 peer-checked:border-burgundy peer-checked:bg-red-50 peer-checked:text-burgundy transition-all text-xs uppercase">Masofaviy</div>
+                        <div class="p-4 text-center border-4 border-gray-100 rounded-2xl font-bold text-gray-500 group-hover:bg-gray-50 peer-checked:border-[#5c0028] peer-checked:bg-red-50 peer-checked:text-burgundy transition-all text-xs uppercase">Masofaviy</div>
                     </label>
                 </div>
             </div>
@@ -168,19 +163,19 @@
                 <i class="fa-solid fa-file-signature text-xl"></i>
                 <span class="font-black uppercase text-sm tracking-widest">ISFT Imtihoni</span>
             </div>
-            <div id="timer" class="bg-white/20 px-5 py-2 rounded-2xl font-mono text-sm font-bold border border-white/30">15:00</div>
+            <div id="timer" class="bg-white/20 px-5 py-2 rounded-2xl font-mono text-sm font-bold border border-white/30">45:00</div>
         </div>
         
-        <div class="p-8 md:p-12 custom-scrollbar max-h-[70vh] overflow-y-auto space-y-12">
-            <div id="questionsList" class="space-y-12"></div>
+        <div class="p-8 md:p-10 custom-scrollbar max-h-[70vh] overflow-y-auto space-y-8">
+            <div id="questionsList" class="space-y-10"></div>
         </div>
 
         <div class="p-8 bg-gray-50 border-t flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="flex items-center gap-3">
-                <div class="h-2 w-32 bg-gray-200 rounded-full overflow-hidden">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="h-2 w-full md:w-32 bg-gray-200 rounded-full overflow-hidden">
                     <div id="progressBar" class="h-full bg-burgundy transition-all duration-300" style="width: 0%"></div>
                 </div>
-                <span id="progressText" class="text-[10px] font-black text-gray-400 uppercase text-center">0 / 45 bajarildi</span>
+                <span id="progressText" class="text-[10px] font-black text-gray-400 uppercase text-center whitespace-nowrap">0 / 45 bajarildi</span>
             </div>
             <button id="finishBtn" onclick="submitTest()" class="w-full md:w-auto px-12 py-4 gradient-bg text-white rounded-2xl font-black shadow-lg hover:shadow-2xl transition-all uppercase tracking-widest text-xs">
                 Testni yakunlash
@@ -273,7 +268,7 @@
 
         const restrictedMajors = ["Pedagogika", "Maktabgacha ta'lim", "Boshlang'ich ta'lim", "Xorijiy til va adabiyoti", "Filologiya va tillarni o'qitish", "Axborot xavfsizligi"];
 
-        // Savollar massivini dinamik yaratuvchi funksiya (Jami 300 ta to'liq savol)
+        // Savollar massivini dinamik yaratuvchi funksiya
         const generateMathBank = () => {
             const arr = [
                 { q: "Kvadrat tenglamaning diskriminanti qanday topiladi?", options: ["D = b² - 4ac", "D = a² - 4bc", "D = c² - 4ab"], correct: 0 },
@@ -287,7 +282,6 @@
                 { q: "Agar a=3, b=4 bo'lsa, to'g'ri burchakli uchburchakning gipotenuzasini toping.", options: ["5", "6", "7"], correct: 0 },
                 { q: "Parallelogramm yuzi qanday hisoblanadi?", options: ["Asosi va unga tushirilgan balandlik ko'paytmasi", "Ikki tomoni ko'paytmasi", "Diagonallari ko'paytmasining yarmi"], correct: 0 }
             ];
-            // 100 ta savolga to'ldirish uchun shablon (Haqiqiy dasturda kengaytiriladi)
             let fullBank = [];
             while(fullBank.length < 100) {
                 arr.forEach(item => {
@@ -348,7 +342,8 @@
         let userData = {};
         let currentQuestions = [];
         let userAnswers = {};
-        let timeLeft = 900;
+        // Vaqt 45 daqiqaga o'zgartirildi (45 * 60 = 2700 soniya)
+        let timeLeft = 2700;
         let timerInterval;
 
         // UI LOGIC
@@ -396,7 +391,6 @@
             const fd = new FormData(e.target);
             userData = Object.fromEntries(fd.entries());
             
-            // Randomly pick 15 from each 100-question bank (Total 45)
             const pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
             currentQuestions = [...pick(mathBank, 15), ...pick(nativeBank, 15), ...pick(englishBank, 15)];
             
@@ -410,16 +404,25 @@
         const renderQuestions = () => {
             const container = document.getElementById('questionsList');
             container.innerHTML = currentQuestions.map((q, i) => `
-                <div class="space-y-4 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div class="flex items-center justify-center gap-2">
-                        <span class="px-2 py-1 bg-red-50 text-burgundy text-[10px] font-black rounded-lg uppercase">${q.cat}</span>
-                        <span class="text-gray-400 text-xs italic">Savol #${i + 1}</span>
+                <div class="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm relative overflow-hidden">
+                    <!-- Orqa fonga yengil urg'u -->
+                    <div class="absolute top-0 left-0 w-full h-1 bg-burgundy opacity-20"></div>
+                    
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-3 py-1 bg-red-50 text-burgundy text-[10px] font-black rounded-lg uppercase tracking-widest">${q.cat}</span>
+                        <span class="text-gray-400 text-xs font-bold bg-gray-50 px-3 py-1 rounded-lg">Savol #${i + 1} / 45</span>
                     </div>
-                    <h4 class="text-lg font-bold text-gray-800 leading-tight px-4">${q.q}</h4>
-                    <div class="grid grid-cols-1 gap-3 max-w-md mx-auto">
+                    
+                    <!-- Savol bloki ajralib turadi -->
+                    <div class="bg-gradient-to-r from-red-50/50 to-pink-50/50 border-l-4 border-[#8b003d] p-5 rounded-2xl">
+                        <h4 class="text-lg md:text-xl font-black text-gray-800 leading-snug">${q.q}</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3 max-w-lg mx-auto w-full pt-2">
                         ${q.options.map((opt, oIdx) => `
+                            <!-- Variantlar qalin hoshiya bilan -->
                             <button onclick="window.selectAnswer(${i}, ${oIdx})" id="q${i}_o${oIdx}" 
-                                class="q-opt-${i} p-4 text-center rounded-2xl border-2 border-gray-100 bg-white text-gray-700 hover:border-burgundy transition-all font-semibold text-sm shadow-sm active:scale-95">
+                                class="q-opt-${i} p-4 text-center rounded-2xl border-4 border-gray-100 bg-white text-gray-700 hover:border-burgundy/50 transition-all font-semibold text-sm shadow-sm active:scale-95 w-full">
                                 ${opt}
                             </button>
                         `).join('')}
@@ -430,8 +433,16 @@
 
         window.selectAnswer = (qIdx, oIdx) => {
             userAnswers[qIdx] = oIdx;
-            document.querySelectorAll(`.q-opt-${qIdx}`).forEach(btn => btn.classList.remove('border-burgundy', 'bg-red-50', 'text-burgundy'));
-            document.getElementById(`q${qIdx}_o${oIdx}`).classList.add('border-burgundy', 'bg-red-50', 'text-burgundy');
+            document.querySelectorAll(`.q-opt-${qIdx}`).forEach(btn => {
+                btn.classList.remove('border-[#5c0028]', 'bg-red-50', 'text-burgundy', 'shadow-md', 'scale-[1.02]');
+                btn.classList.add('border-gray-100', 'bg-white', 'text-gray-700');
+            });
+            
+            const selectedBtn = document.getElementById(`q${qIdx}_o${oIdx}`);
+            selectedBtn.classList.remove('border-gray-100', 'bg-white', 'text-gray-700');
+            // Tanlanganda qalin to'q chiziq (#5c0028) va maxsus stillar qo'shiladi
+            selectedBtn.classList.add('border-[#5c0028]', 'bg-red-50', 'text-burgundy', 'shadow-md', 'scale-[1.02]');
+            
             const done = Object.keys(userAnswers).length;
             document.getElementById('progressBar').style.width = `${(done / 45) * 100}%`;
             document.getElementById('progressText').innerText = `${done} / 45 bajarildi`;
@@ -471,7 +482,6 @@
                 await fetch(scriptURL, { method: 'POST', body: new URLSearchParams(payload) });
                 document.getElementById('testSection').classList.add('hidden');
                 
-                // 30 ballik o'tish chegarasi
                 if (score >= 30) {
                     document.getElementById('resultSuccess').classList.remove('hidden');
                     document.getElementById('successMsg').innerHTML = `Hurmatli <b>${userData.firstName}</b>, siz <b>${userData.major}</b> (${userData.studyType}) yo'nalishiga o'qishga tavsiya etildingiz!`;
