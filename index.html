@@ -386,6 +386,37 @@
             }
         });
 
+        // AVTOMATIK BOSH HARFLAR BILAN YOZISH FUNKSIYASI (FORMATTER)
+        const autoCapitalizeName = (e) => {
+            let words = e.target.value.split(' ');
+            e.target.value = words.map(word => {
+                if (word.length > 0) {
+                    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                }
+                return word;
+            }).join(' ');
+        };
+
+        document.querySelector('input[name="lastName"]').addEventListener('input', autoCapitalizeName);
+        document.querySelector('input[name="firstName"]').addEventListener('input', autoCapitalizeName);
+        document.querySelector('input[name="middleName"]').addEventListener('input', autoCapitalizeName);
+
+
+        const formatPhone = (e) => {
+            let val = e.target.value.replace(/\D/g, '').substring(3);
+            let res = '+998 ';
+            if (val.length > 0) res += val.substring(0, 2);
+            if (val.length > 2) res += ' ' + val.substring(2, 5);
+            if (val.length > 5) res += '-' + val.substring(5, 7);
+            if (val.length > 7) res += '-' + val.substring(7, 9);
+            e.target.value = res;
+        };
+        document.getElementById('studentPhone').addEventListener('input', formatPhone);
+        document.getElementById('parentPhone').addEventListener('input', formatPhone);
+        document.getElementById('passport').addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 9);
+        });
+
         document.getElementById('registrationForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const fd = new FormData(e.target);
