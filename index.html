@@ -79,15 +79,15 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="space-y-2">
                     <label class="block text-xs font-black text-gray-400 uppercase tracking-widest">Familiya <span class="text-red-500">*</span></label>
-                    <input type="text" name="lastName" required placeholder="Azizov" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl form-input font-medium text-center text-sm">
+                    <input type="text" name="lastName" id="lastNameInput" required placeholder="Azizov" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl form-input font-medium text-center text-sm">
                 </div>
                 <div class="space-y-2">
                     <label class="block text-xs font-black text-gray-400 uppercase tracking-widest">Ism <span class="text-red-500">*</span></label>
-                    <input type="text" name="firstName" required placeholder="Anvar" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl form-input font-medium text-center text-sm">
+                    <input type="text" name="firstName" id="firstNameInput" required placeholder="Anvar" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl form-input font-medium text-center text-sm">
                 </div>
                 <div class="space-y-2">
                     <label class="block text-xs font-black text-gray-400 uppercase tracking-widest">Sharif</label>
-                    <input type="text" name="middleName" placeholder="Abdukarimovich" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl form-input font-medium text-center text-sm">
+                    <input type="text" name="middleName" id="middleNameInput" placeholder="Abdukarimovich" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl form-input font-medium text-center text-sm">
                 </div>
             </div>
 
@@ -163,6 +163,7 @@
                 <i class="fa-solid fa-file-signature text-xl"></i>
                 <span class="font-black uppercase text-sm tracking-widest">ISFT Imtihoni</span>
             </div>
+            <!-- Vaqt 45 daqiqaga o'zgartirildi -->
             <div id="timer" class="bg-white/20 px-5 py-2 rounded-2xl font-mono text-sm font-bold border border-white/30">45:00</div>
         </div>
         
@@ -268,77 +269,147 @@
 
         const restrictedMajors = ["Pedagogika", "Maktabgacha ta'lim", "Boshlang'ich ta'lim", "Xorijiy til va adabiyoti", "Filologiya va tillarni o'qitish", "Axborot xavfsizligi"];
 
-        // Savollar massivini dinamik yaratuvchi funksiya
-        const generateMathBank = () => {
-            const arr = [
-                { q: "Kvadrat tenglamaning diskriminanti qanday topiladi?", options: ["D = b² - 4ac", "D = a² - 4bc", "D = c² - 4ab"], correct: 0 },
-                { q: "Arifmetik progressiyada ketma-ket keluvchi ikkita hadning ayirmasi nima deyiladi?", options: ["Progressiya ayirmasi", "Progressiya mahraji", "Progressiya yig'indisi"], correct: 0 },
-                { q: "Pifagor teoremasi qaysi shakl uchun qo'llaniladi?", options: ["Teng yonli uchburchak", "To'g'ri burchakli uchburchak", "Teng tomonli uchburchak"], correct: 1 },
-                { q: "Doira yuzini topish formulasi qaysi?", options: ["S = πr²", "S = 2πr", "S = πd"], correct: 0 },
-                { q: "Sinus deb to'g'ri burchakli uchburchakda nimaga aytiladi?", options: ["Qarshisidagi katetning gipotenuzaga nisbati", "Yopishgan katetning gipotenuzaga nisbati", "Katetning katetga nisbati"], correct: 0 },
-                { q: "y = x² funksiya grafigi qanday ataladi?", options: ["To'g'ri chiziq", "Giperbola", "Parabola"], correct: 2 },
-                { q: "Vektorlar qachon perpendikulyar bo'ladi?", options: ["Skalyar ko'paytmasi 1 ga teng bo'lsa", "Skalyar ko'paytmasi 0 ga teng bo'lsa", "Uzunliklari teng bo'lsa"], correct: 1 },
-                { q: "Kvadrat tengsizlikni yechishda qaysi usuldan ko'proq foydalaniladi?", options: ["O'rniga qo'yish usuli", "Intervallar usuli", "Grafik usul"], correct: 1 },
-                { q: "Agar a=3, b=4 bo'lsa, to'g'ri burchakli uchburchakning gipotenuzasini toping.", options: ["5", "6", "7"], correct: 0 },
-                { q: "Parallelogramm yuzi qanday hisoblanadi?", options: ["Asosi va unga tushirilgan balandlik ko'paytmasi", "Ikki tomoni ko'paytmasi", "Diagonallari ko'paytmasining yarmi"], correct: 0 }
-            ];
-            let fullBank = [];
-            while(fullBank.length < 100) {
-                arr.forEach(item => {
-                    if(fullBank.length < 100) fullBank.push({...item, cat: "Matematika"});
+        // Savollar bazasi (8-9 sinf dasturi asosida tozalangan)
+        const mathQuestions = [
+            { q: "Kvadrat tenglamaning diskriminanti qanday topiladi?", options: ["D = b² - 4ac", "D = a² - 4bc", "D = c² - 4ab"], correct: 0 },
+            { q: "Arifmetik progressiyada ketma-ket keluvchi ikkita hadning ayirmasi nima deyiladi?", options: ["Progressiya ayirmasi", "Progressiya mahraji", "Progressiya yig'indisi"], correct: 0 },
+            { q: "Pifagor teoremasi qaysi shakl uchun qo'llaniladi?", options: ["Teng yonli uchburchak", "To'g'ri burchakli uchburchak", "Teng tomonli uchburchak"], correct: 1 },
+            { q: "Doira yuzini topish formulasi qaysi?", options: ["S = πr²", "S = 2πr", "S = πd"], correct: 0 },
+            { q: "Sinus deb to'g'ri burchakli uchburchakda nimaga aytiladi?", options: ["Qarshisidagi katetning gipotenuzaga nisbati", "Yopishgan katetning gipotenuzaga nisbati", "Katetning katetga nisbati"], correct: 0 },
+            { q: "y = x² funksiya grafigi qanday ataladi?", options: ["To'g'ri chiziq", "Giperbola", "Parabola"], correct: 2 },
+            { q: "Vektorlar qachon perpendikulyar bo'ladi?", options: ["Skalyar ko'paytmasi 1 ga teng bo'lsa", "Skalyar ko'paytmasi 0 ga teng bo'lsa", "Uzunliklari teng bo'lsa"], correct: 1 },
+            { q: "Kvadrat tengsizlikni yechishda qaysi usuldan ko'proq foydalaniladi?", options: ["O'rniga qo'yish usuli", "Intervallar usuli", "Grafik usul"], correct: 1 },
+            { q: "Agar a=3, b=4 bo'lsa, to'g'ri burchakli uchburchakning gipotenuzasini toping.", options: ["5", "6", "7"], correct: 0 },
+            { q: "Parallelogramm yuzi qanday hisoblanadi?", options: ["Asosi va unga tushirilgan balandlik ko'paytmasi", "Ikki tomoni ko'paytmasi", "Diagonallari ko'paytmasining yarmi"], correct: 0 },
+            { q: "Trapetsiyaning yuzi formulasi qanday?", options: ["S = (a+b)*h/2", "S = a*b*h", "S = (a+b)/2"], correct: 0 },
+            { q: "Aylananing uzunligi formulasi qaysi?", options: ["L = 2πr", "L = πr²", "L = πr"], correct: 0 },
+            { q: "Rombning diagonallari qanday xossaga ega?", options: ["O'zaro parallel", "O'zaro perpendikulyar va burchakni teng bo'ladi", "Faqat teng bo'ladi"], correct: 1 },
+            { q: "y = kx + b funksiyada 'k' nimani anglatadi?", options: ["Burchak koeffitsiyenti", "Ozod had", "Parabola uchi"], correct: 0 },
+            { q: "Qavariq ko'pburchakning ichki burchaklari yig'indisi qanday topiladi?", options: ["180° * n", "180° * (n-2)", "360° * n"], correct: 1 },
+            { q: "O'zaro o'xshash uchburchaklarning yuzalari nisbati nimaga teng?", options: ["O'xshashlik koeffitsiyentiga", "O'xshashlik koeffitsiyentining kvadratiga", "Ularning perimetrlari nisbatiga"], correct: 1 },
+            { q: "x² - 5x + 6 = 0 tenglamaning ildizlari yig'indisi nechaga teng? (Viyet teoremasi)", options: ["5", "-5", "6"], correct: 0 },
+            { q: "Uchburchakning medianasi qanday xossaga ega?", options: ["Burchakni teng ikkiga bo'ladi", "Qarshisidagi tomonni o'rtasi bilan tutashtiradi", "Tomonga perpendikulyar tushadi"], correct: 1 },
+            { q: "Geometrik progressiya mahraji (q) deb nimaga aytiladi?", options: ["b(n) - b(n-1)", "b(n) / b(n-1)", "b(n) + b(n-1)"], correct: 1 },
+            { q: "To'g'ri to'rtburchakning perimetri qanday topiladi?", options: ["P = 2(a+b)", "P = a+b", "P = a*b"], correct: 0 },
+            { q: "Logarifmning asosiy ayniyati qaysi?", options: ["a^(log_a b) = b", "log_a (b*c) = log_a b", "a^b = c"], correct: 0 },
+            { q: "Trapetsiyaning o'rta chizig'i nimaga teng?", options: ["Asoslari yig'indisiga", "Asoslari yig'indisining yarmiga", "Yon tomonlar yig'indisiga"], correct: 1 },
+            { q: "Ikkita qarama-qarshi sonlarning yig'indisi nechaga teng?", options: ["1", "0", "-1"], correct: 1 },
+            { q: "Tub sonlar deb qanday sonlarga aytiladi?", options: ["Faqat 1 ga bo'linadigan", "1 ga va o'ziga bo'linadigan", "Barcha toq sonlar"], correct: 1 },
+            { q: "Modul belgisidan son qanday chiqadi?", options: ["Har doim musbat yoki nol", "Har doim manfiy", "O'zgarishsiz"], correct: 0 },
+            { q: "Aylana uzunligining diametrga nisbati nima deb ataladi?", options: ["π (pi) soni", "Radian", "Radius"], correct: 0 },
+            { q: "Teng yonli uchburchakning qanday burchaklari teng bo'ladi?", options: ["Asosidagi burchaklari", "Uchidagi burchaklari", "Barcha burchaklari"], correct: 0 },
+            { q: "3 ning 4-darajasi nechaga teng?", options: ["12", "27", "81"], correct: 2 },
+            { q: "Qanday uchburchakda uchidan tushirilgan balandlik ham bissektrisa, ham mediana bo'ladi?", options: ["To'g'ri burchakli", "Teng yonli", "Turli tomonli"], correct: 1 },
+            { q: "Silindrning yon sirti yuzi qanday topiladi?", options: ["S = 2πrh", "S = πr²h", "S = πrl"], correct: 0 },
+            { q: "Qanday sonlar ratsional sonlar deyiladi?", options: ["Kasr shaklida yozib bo'ladigan", "Faqat butun sonlar", "Ildiz ostidan chiqmaydigan"], correct: 0 },
+            { q: "Ixtiyoriy sonning 0-darajasi nechaga teng (0 dan tashqari)?", options: ["0", "1", "O'ziga teng"], correct: 1 },
+            { q: "Kvadratning yuzi 64 ga teng. Uning tomonini toping.", options: ["8", "16", "32"], correct: 0 },
+            { q: "Arifmetik progressiyaning dastlabki n ta hadining yig'indisi qanday topiladi?", options: ["S_n = ((a_1 + a_n)/2) * n", "S_n = a_1 * n", "S_n = a_1 + a_n * n"], correct: 0 },
+            { q: "Tangens deb nimaga aytiladi?", options: ["Qarshisidagi katetning yopishgan katetga nisbatiga", "Gipotenuzaning katetga nisbatiga", "Yopishgan katetning qarshisidagiga nisbatiga"], correct: 0 },
+            { q: "Ikkita to'g'ri chiziqning kesishishidan hosil bo'lgan vertikal burchaklar qanday munosabatda?", options: ["O'zaro teng", "Yig'indisi 180", "Yig'indisi 90"], correct: 0 },
+            { q: "5! (5 faktorial) nimaga teng?", options: ["120", "60", "24"], correct: 0 },
+            { q: "Qanday burchakning sinusi va kosinusi o'zaro teng?", options: ["30°", "45°", "60°"], correct: 1 },
+            { q: "Aylana markazidan uning ixtiyoriy nuqtasiga o'tkazilgan kesma nima deyiladi?", options: ["Xorda", "Diametr", "Radius"], correct: 2 },
+            { q: "Kubning hajmi formulasi qanday?", options: ["V = a³", "V = 3a", "V = a²"], correct: 0 }
+        ];
+
+        const nativeQuestions = [
+            { q: "Qismlari teng bog'lovchilar yordamida birikkan qo'shma gap nima deyiladi?", options: ["Bog'langan qo'shma gap", "Ergash gapli qo'shma gap", "Bog'lovchisiz qo'shma gap"], correct: 0 },
+            { q: "Ergash gap bosh gapga qanday vositalar orqali bog'lanadi?", options: ["Teng bog'lovchilar orqali", "Tobe bog'lovchilar va ko'makchili qurilmalar orqali", "Faqat ohang orqali"], correct: 1 },
+            { q: "\"Chunki, shuning uchun, negaki\" so'zlari qaysi bog'lovchi turiga kiradi?", options: ["Sabab bog'lovchilari", "Zidlov bog'lovchilari", "Shart bog'lovchilari"], correct: 0 },
+            { q: "Ko'chirma gapli gapda muallif gapi ko'chirma gapdan oldin kelsa, qanday tinish belgisi qo'yiladi?", options: ["Ikki nuqta (:)", "Tire (-)", "Vergul (,)"], correct: 0 },
+            { q: "Egasiz gaplarni toping.", options: ["Bahor keldi.", "Havo isidi.", "Ko'chada sovuq edi."], correct: 2 },
+            { q: "Undalma qatnashgan gapni belgilang.", options: ["O'g'lim, kitobingni o'qi.", "U maktabga ketdi.", "Hamma darsga tayyor."], correct: 0 },
+            { q: "Nutq uslublari nechta?", options: ["4 ta", "5 ta", "6 ta"], correct: 1 },
+            { q: "Badiiy uslubning asosiy belgisi nima?", options: ["Mantiqiylik", "Obrazlilik va emotsionallik", "Rasmiylik"], correct: 1 },
+            { q: "Kirish so'zlar qanday vazifani bajaradi?", options: ["Gap bo'laklarini bog'laydi", "So'zlovchining o'z fikriga munosabatini bildiradi", "Gapni yakunlaydi"], correct: 1 },
+            { q: "So'z tarkibi qanday qismlardan iborat?", options: ["Asos va qo'shimcha", "Unli va undosh", "Ega va kesim"], correct: 0 },
+            { q: "O'zlashma so'zlar qaysi qatorda berilgan?", options: ["Traktor, daftar, qalam", "Suv, tosh, havo", "Ota, ona, bola"], correct: 0 },
+            { q: "Yasama so'zni toping.", options: ["Toshkentlik, ishchi", "Kitob, qalam", "Olma, anor"], correct: 0 },
+            { q: "Sinonimlar nima?", options: ["Ma'nosi bir xil, shakli har xil so'zlar", "Shakli bir xil, ma'nosi har xil", "Ma'nosi qarama-qarshi"], correct: 0 },
+            { q: "Antonim so'zlar qatnashgan gapni toping.", options: ["Yaxshi topib gapirar, yomon qopib gapirar.", "U kitob o'qidi.", "Havo sovuq edi."], correct: 0 },
+            { q: "Olmosh qanday so'z turkumi?", options: ["Ot, sifat, son o'rnida qo'llaniluvchi", "Faqat harakatni bildiruvchi", "Holatni ifodalovchi"], correct: 0 },
+            { q: "Fe'lning mayllari nechta?", options: ["3 ta", "4 ta", "5 ta"], correct: 1 },
+            { q: "Sifat darajalari qaysilar?", options: ["Oddiy, qiyosiy, orttirma, ozaytirma", "Ega, kesim, to'ldiruvchi", "Shaxs, son, zamon"], correct: 0 },
+            { q: "Ravishning ma'no turlari qaysilar?", options: ["Holat, payt, o'rin, miqdor-daraja", "Bosh va ergash", "Aniq va noaniq"], correct: 0 },
+            { q: "Bog'lovchilar qanday vazifani bajaradi?", options: ["So'z va gaplarni bog'lash", "Faqat his-tuyg'uni ifodalash", "Yangi so'z yasash"], correct: 0 },
+            { q: "Uyushiq bo'lakli gapni toping.", options: ["Olma, anor va noklar pishdi.", "U maktabga bordi.", "Bugun havo issiq."], correct: 0 },
+            { q: "Qanday qo'shimchalar so'z yasovchi hisoblanadi?", options: ["-chi, -lik, -dosh", "-lar, -ni, -ning", "-m, -ng, -si"], correct: 0 },
+            { q: "Yordamchi so'z turkumlari qaysilar?", options: ["Ko'makchi, bog'lovchi, yuklama", "Ot, sifat, fe'l", "Olmosh, ravish, son"], correct: 0 },
+            { q: "Ko'makchilar gapda qanday vazifa bajaradi?", options: ["So'zlarni tobe yo'l bilan bog'laydi", "Teng huquqli so'zlarni bog'laydi", "Emotsional ma'no beradi"], correct: 0 },
+            { q: "Qaysi so'z turkumi narsa-buyumning belgisini bildiradi?", options: ["Sifat", "Ot", "Fe'l"], correct: 0 },
+            { q: "Son so'z turkumi qanday ma'no bildiradi?", options: ["Predmetning sanog'i va tartibini", "Predmetning harakatini", "Predmetning nomini"], correct: 0 },
+            { q: "Ajratilgan bo'laklar qaysi tinish belgisi bilan ajratiladi?", options: ["Vergul yoki tire bilan", "Nuqta bilan", "So'roq belgisi bilan"], correct: 0 },
+            { q: "Shaxsi ma'lum gap deb qanday gapga aytiladi?", options: ["Egasi ko'rinib turgan yoki topish oson bo'lgan gap", "Egasi umuman yo'q gap", "Egasini topib bo'lmaydigan gap"], correct: 0 },
+            { q: "Atov gap qanday gap?", options: ["Predmet nomini atab, uning mavjudligini bildiruvchi gap", "Faqat kesimdan iborat gap", "Inkor mazmundagi gap"], correct: 0 },
+            { q: "Qaysi uslubda asosan qonun va qarorlar yoziladi?", options: ["Rasmiy-idoraviy uslub", "Ilmiy uslub", "Badiiy uslub"], correct: 0 },
+            { q: "O'zlashtirma gap nima?", options: ["Birovning gapini mazmunini saqlab, shaklini o'zgartirib berish", "Birovning gapini o'zgarishsiz berish", "Maqol va matallar"], correct: 0 },
+            { q: "Qaysi qatorda faqat jarangli undoshlar berilgan?", options: ["B, v, g, d, z", "P, t, k, s, sh", "M, n, l, r, y"], correct: 0 },
+            { q: "Tub so'zlar qanday so'zlar?", options: ["Tarkibida yasovchi qo'shimchasi bo'lmagan so'zlar", "Yasovchi qo'shimchasi bor so'zlar", "Ikki so'zdan tuzilgan so'zlar"], correct: 0 },
+            { q: "Ibora (frazeologizm) nima?", options: ["Ko'chma ma'noli turg'un so'z birikmasi", "Faqat o'z ma'nosidagi birikma", "Teng bog'langan so'zlar"], correct: 0 },
+            { q: "Ega va kesim o'rtasida qachon tire qo'yiladi?", options: ["Ikkalasi ham ot bilan ifodalanganda", "Ega olmosh bo'lganda", "Kesim fe'l bo'lganda"], correct: 0 },
+            { q: "Hol qanday so'z turkumiga tobe bo'ladi?", options: ["Asosan fe'lga (kesimga)", "Asosan otga (egaga)", "Sifatga"], correct: 0 }
+        ];
+
+        const englishQuestions = [
+            { q: "Choose the correct form: If it ___, we will stay at home.", options: ["rains", "rain", "will rain"], correct: 0 },
+            { q: "I have been learning English ___ 5 years.", options: ["for", "since", "at"], correct: 0 },
+            { q: "The book ___ by Mark Twain in 1884.", options: ["was written", "writes", "is written"], correct: 0 },
+            { q: "She asked me where I ___ going.", options: ["was", "am", "will be"], correct: 0 },
+            { q: "I am interested ___ reading books.", options: ["in", "at", "on"], correct: 0 },
+            { q: "Which tense is used to describe an action completed before a certain moment in the past?", options: ["Past Perfect", "Past Continuous", "Present Perfect"], correct: 0 },
+            { q: "He ___ a new car yesterday.", options: ["bought", "buy", "have bought"], correct: 0 },
+            { q: "I ___ finished my homework yet.", options: ["haven't", "didn't", "don't"], correct: 0 },
+            { q: "The person ___ lives next door is a doctor.", options: ["who", "which", "whose"], correct: 0 },
+            { q: "Choose the synonym of 'Famous':", options: ["Well-known", "Unknown", "Quiet"], correct: 0 },
+            { q: "We ___ TV when the phone rang.", options: ["were watching", "watch", "have watched"], correct: 0 },
+            { q: "She is good ___ playing the piano.", options: ["at", "in", "on"], correct: 0 },
+            { q: "I haven't seen him ___ last month.", options: ["since", "for", "from"], correct: 0 },
+            { q: "This is the house ___ Shakespeare was born.", options: ["where", "which", "who"], correct: 0 },
+            { q: "You ___ to wear a uniform at school.", options: ["have", "must", "should"], correct: 0 },
+            { q: "The plural form of 'child' is:", options: ["children", "childs", "childrens"], correct: 0 },
+            { q: "Which word is an adjective?", options: ["Beautiful", "Quickly", "Happiness"], correct: 0 },
+            { q: "What is the comparative form of the word 'bad'?", options: ["worse", "badder", "worst"], correct: 0 },
+            { q: "He usually ___ up at 7 o'clock.", options: ["gets", "got", "getting"], correct: 0 },
+            { q: "If I had money, I ___ buy a car.", options: ["would", "will", "can"], correct: 0 },
+            { q: "I look forward ___ seeing you.", options: ["to", "for", "at"], correct: 0 },
+            { q: "He is the ___ student in our class.", options: ["best", "better", "good"], correct: 0 },
+            { q: "We ___ to London next week.", options: ["are flying", "flies", "flew"], correct: 0 },
+            { q: "Find the odd word out:", options: ["Chair", "Apple", "Banana"], correct: 0 },
+            { q: "My father works ___ a bank.", options: ["in", "on", "at"], correct: 0 },
+            { q: "They ___ each other for 10 years.", options: ["have known", "knew", "knows"], correct: 0 },
+            { q: "If you heat ice, it ___.", options: ["melts", "melt", "melted"], correct: 0 },
+            { q: "___ you ever been to Paris?", options: ["Have", "Did", "Are"], correct: 0 },
+            { q: "I don't have ___ money.", options: ["any", "some", "many"], correct: 0 },
+            { q: "She speaks English very ___.", options: ["well", "good", "nice"], correct: 0 },
+            { q: "Can you tell me where the station ___?", options: ["is", "are", "does"], correct: 0 },
+            { q: "He ___ breakfast when I arrived.", options: ["was having", "had", "has"], correct: 0 },
+            { q: "I wish I ___ speak Spanish.", options: ["could", "can", "will"], correct: 0 },
+            { q: "The meeting ___ at 9:00 AM.", options: ["started", "starting", "starts"], correct: 0 },
+            { q: "Would you mind ___ the window?", options: ["closing", "close", "to close"], correct: 0 },
+            { q: "Let's go to the cinema, ___?", options: ["shall we", "don't we", "will we"], correct: 0 },
+            { q: "He drives ___ than his brother.", options: ["faster", "fastest", "more fast"], correct: 0 },
+            { q: "I am used to ___ early.", options: ["waking", "wake", "woke"], correct: 0 },
+            { q: "You had better ___ home now.", options: ["go", "to go", "going"], correct: 0 },
+            { q: "This is the boy ___ car was stolen.", options: ["whose", "who", "which"], correct: 0 }
+        ];
+
+        // Ensure 100 size for banks via looping templates (cleanly built)
+        const generateFullBank = (baseArr, category) => {
+            let full = [];
+            while(full.length < 100) {
+                baseArr.forEach(item => {
+                    if(full.length < 100) full.push({...item, cat: category});
                 });
             }
-            return fullBank;
+            return full;
         };
 
-        const generateNativeBank = () => {
-            const arr = [
-                { q: "Qismlari teng bog'lovchilar yordamida birikkan qo'shma gap nima deyiladi?", options: ["Bog'langan qo'shma gap", "Ergash gapli qo'shma gap", "Bog'lovchisiz qo'shma gap"], correct: 0 },
-                { q: "Ergash gap bosh gapga qanday vositalar orqali bog'lanadi?", options: ["Teng bog'lovchilar orqali", "Tobe bog'lovchilar va ko'makchili qurilmalar orqali", "Faqat ohang orqali"], correct: 1 },
-                { q: "\"Chunki, shuning uchun, negaki\" so'zlari qaysi bog'lovchi turiga kiradi?", options: ["Sabab bog'lovchilari", "Zidlov bog'lovchilari", "Shart bog'lovchilari"], correct: 0 },
-                { q: "Ko'chirma gapli gapda muallif gapi ko'chirma gapdan oldin kelsa, qanday tinish belgisi qo'yiladi?", options: ["Ikki nuqta (:)", "Tire (-)", "Vergul (,)"], correct: 0 },
-                { q: "Egasiz gaplarni toping.", options: ["Bahor keldi.", "Havo isidi.", "Ko'chada sovuq edi."], correct: 2 },
-                { q: "Undalma qatnashgan gapni belgilang.", options: ["O'g'lim, kitobingni o'qi.", "U maktabga ketdi.", "Hamma darsga tayyor."], correct: 0 },
-                { q: "Nutq uslublari nechta?", options: ["4 ta", "5 ta", "6 ta"], correct: 1 },
-                { q: "Badiiy uslubning asosiy belgisi nima?", options: ["Mantiqiylik", "Obrazlilik va emotsionallik", "Rasmiylik"], correct: 1 },
-                { q: "Kirish so'zlar qanday vazifani bajaradi?", options: ["Gap bo'laklarini bog'laydi", "So'zlovchining o'z fikriga munosabatini bildiradi", "Gapni yakunlaydi"], correct: 1 },
-                { q: "So'z tarkibi qanday qismlardan iborat?", options: ["Asos va qo'shimcha", "Unli va undosh", "Ega va kesim"], correct: 0 }
-            ];
-            let fullBank = [];
-            while(fullBank.length < 100) {
-                arr.forEach(item => {
-                    if(fullBank.length < 100) fullBank.push({...item, cat: "Ona tili"});
-                });
-            }
-            return fullBank;
-        };
+        const mathBank = generateFullBank(mathQuestions, "Matematika");
+        const nativeBank = generateFullBank(nativeQuestions, "Ona tili");
+        const englishBank = generateFullBank(englishQuestions, "Ingliz tili");
 
-        const generateEnglishBank = () => {
-            const arr = [
-                { q: "Choose the correct form: If it ___, we will stay at home.", options: ["rains", "rain", "will rain"], correct: 0 },
-                { q: "I have been learning English ___ 5 years.", options: ["for", "since", "at"], correct: 0 },
-                { q: "The book ___ by Mark Twain in 1884.", options: ["was written", "writes", "is written"], correct: 0 },
-                { q: "She asked me where I ___ going.", options: ["was", "am", "will be"], correct: 0 },
-                { q: "I am interested ___ reading books.", options: ["in", "at", "on"], correct: 0 },
-                { q: "Which tense is used to describe an action completed before a certain moment in the past?", options: ["Past Perfect", "Past Continuous", "Present Perfect"], correct: 0 },
-                { q: "He ___ a new car yesterday.", options: ["bought", "buy", "have bought"], correct: 0 },
-                { q: "I ___ finished my homework yet.", options: ["haven't", "didn't", "don't"], correct: 0 },
-                { q: "The person ___ lives next door is a doctor.", options: ["who", "which", "whose"], correct: 0 },
-                { q: "Choose the synonym of 'Famous':", options: ["Unknown", "Well-known", "Quiet"], correct: 1 }
-            ];
-            let fullBank = [];
-            while(fullBank.length < 100) {
-                arr.forEach(item => {
-                    if(fullBank.length < 100) fullBank.push({...item, cat: "Ingliz tili"});
-                });
-            }
-            return fullBank;
-        };
-
-        const mathBank = generateMathBank();
-        const nativeBank = generateNativeBank();
-        const englishBank = generateEnglishBank();
-
+        // STATE
         let userData = {};
         let currentQuestions = [];
         let userAnswers = {};
@@ -386,7 +457,7 @@
             }
         });
 
-        // AVTOMATIK BOSH HARFLAR BILAN YOZISH FUNKSIYASI (FORMATTER)
+        // AVTOMATIK BOSH HARFLAR BILAN YOZISH FUNKSIYASI (Auto-capitalize)
         const autoCapitalizeName = (e) => {
             let words = e.target.value.split(' ');
             e.target.value = words.map(word => {
@@ -422,6 +493,7 @@
             const fd = new FormData(e.target);
             userData = Object.fromEntries(fd.entries());
             
+            // Random tarzda har bir fandan 15 tadan (jami 45 ta) savolni olish
             const pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
             currentQuestions = [...pick(mathBank, 15), ...pick(nativeBank, 15), ...pick(englishBank, 15)];
             
@@ -471,7 +543,7 @@
             
             const selectedBtn = document.getElementById(`q${qIdx}_o${oIdx}`);
             selectedBtn.classList.remove('border-gray-100', 'bg-white', 'text-gray-700');
-            // Tanlanganda qalin to'q chiziq (#5c0028) va maxsus stillar qo'shiladi
+            // Tanlanganda qalin to'q chiziq (#5c0028)
             selectedBtn.classList.add('border-[#5c0028]', 'bg-red-50', 'text-burgundy', 'shadow-md', 'scale-[1.02]');
             
             const done = Object.keys(userAnswers).length;
@@ -513,14 +585,15 @@
                 await fetch(scriptURL, { method: 'POST', body: new URLSearchParams(payload) });
                 document.getElementById('testSection').classList.add('hidden');
                 
+                // O'tish bali: 30 ball
                 if (score >= 30) {
                     document.getElementById('resultSuccess').classList.remove('hidden');
-                    document.getElementById('successMsg').innerHTML = `Hurmatli <b>${userData.firstName}</b>, siz <b>${userData.major}</b> (${userData.studyType}) yo'nalishiga o'qishga tavsiya etildingiz!`;
+                    document.getElementById('successMsg').innerHTML = `Hurmatli <b>${userData.lastName} ${userData.firstName}</b>, siz <b>${userData.major}</b> (${userData.studyType}) yo'nalishiga o'qishga tavsiya etildingiz!`;
                     document.getElementById('successScore').innerText = `Natijangiz: 45 balldan ${score} ball`;
                     createConfetti();
                 } else {
                     document.getElementById('resultFailed').classList.remove('hidden');
-                    document.getElementById('failedScore').innerText = `Siz 45 tadan faqat ${score} ta savolga to'g'ri javob berdingiz.`;
+                    document.getElementById('failedScore').innerText = `Siz 45 tadan faqat ${score} ta savolga to'g'ri javob berdingiz. O'tish bali 30 ball.`;
                 }
                 window.scrollTo(0, 0);
             } catch (e) { alert("Tarmoq xatosi. Internetni tekshiring."); btn.disabled = false; btn.innerText = "Testni yakunlash"; }
